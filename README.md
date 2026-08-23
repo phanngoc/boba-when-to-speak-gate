@@ -12,6 +12,12 @@ fastest way to get muted; the hard problem is knowing when to stay quiet.
 > [Limitations](#limitations). It is fully runnable and tested with **zero
 > third-party dependencies** (Python 3.10+ stdlib).
 
+> 📈 **Going to production / Vietnam market?** Read
+> [`PRODUCTION.md`](./PRODUCTION.md) (reference → production-class gap analysis)
+> and [`VIETNAM_MARKET.md`](./VIETNAM_MARKET.md) (why the iMessage model must
+> pivot for VN: Zalo dominates but is closed to friend-group bots, Messenger
+> group bots can't read history, and PDPL 91/2025 + data-localization apply).
+
 ---
 
 ## Vì sao cần cổng này? (The core idea)
