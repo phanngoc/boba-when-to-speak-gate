@@ -51,6 +51,9 @@ _TIME_RE = re.compile(r"\b\d{1,2}\s*(h|gio|:)\s*\d{0,2}\b")
 
 
 def strip_accents(s: str) -> str:
+    # 'đ'/'Đ' are standalone Latin letters (no combining mark) → replace manually,
+    # otherwise "đi"/"đồng" survive as "đi"/"đong" and lexicon matches silently fail.
+    s = s.replace("đ", "d").replace("Đ", "D")
     nfkd = unicodedata.normalize("NFD", s)
     return "".join(c for c in nfkd if unicodedata.category(c) != "Mn")
 
@@ -134,7 +137,7 @@ def looks_like_resolution(text: str) -> bool:
         return True
     if has_time_expression(text) and not is_question(text):
         return True
-    if t == "di" or t.endswith(" di") or t.startswith("di "):
+    if t == "di" or t.endswith(" di"):     # trailing "... đi" = a proposal
         return True
     return False
 
@@ -175,7 +178,7 @@ def extract(msg: Message, thread: Thread, now: float, answers_open_loop: bool) -
     return Signals(
         is_question=is_question(msg.text),
         intent=intent,
-        mentions_boba=mentions_boba(msg.text),
+        mentions_boba=mentions_boba(msg.text) or msg.mention,
         reply_to_boba=_reply_to_boba(msg, thread),
         is_dm=thread.is_dm,
         is_dismiss=intent == Intent.DISMISS,

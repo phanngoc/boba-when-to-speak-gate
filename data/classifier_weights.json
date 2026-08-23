@@ -1,0 +1,19 @@
+{
+  "weights": {
+    "planning": 1.0942351793912495,
+    "deadlock": 1.8276053611569318,
+    "explicit_request": 3.632034643644859,
+    "question_group": 1.6971051872407392,
+    "unanswered": -1.2415223695071504,
+    "addressed_individual": 0.12222888019960623,
+    "velocity_high": 0.0,
+    "humans_converging": -0.13918979654760896,
+    "recently_ignored": 0.0,
+    "mentions_boba": 2.111916586057281,
+    "is_dm": 0.0,
+    "is_question": -0.36110975894178504
+  },
+  "bias": -1.7065539324865244,
+  "ignored_cap": 3,
+  "n": 42
+}

@@ -35,14 +35,28 @@ def _intent_rtype(intent: Intent) -> ResponseType:
 class Gate:
     def __init__(self, cfg: GateConfig = DEFAULT,
                  classifier: Optional[ClassifierBase] = None,
-                 judge: Optional[JudgeBase] = None):
+                 judge: Optional[JudgeBase] = None,
+                 consent=None):
         self.cfg = cfg
         self.classifier = classifier or LinearClassifier(cfg)
         self.judge = judge or RuleBasedJudge()
+        self.consent = consent            # optional ConsentStore (PDPL)
 
     # --- inbound ----------------------------------------------------------
     def handle(self, msg: Message, thread: Thread, now: Optional[float] = None) -> Decision:
         now = msg.ts if now is None else now
+
+        # PDPL gate: without consent we do NOT store/process the group's messages
+        # (data minimization). Only an explicit opt-in phrase is honored.
+        if self.consent is not None and not self.consent.is_allowed(thread.thread_id):
+            from ..consent import is_optin
+            if is_optin(msg.text):
+                self.consent.grant(thread.thread_id, msg.sender_id, now)
+                thread.append(msg)
+                return Decision(speak=True, decided_by=Stage.STAGE0_RULES,
+                                response_type=ResponseType.DIRECT, confidence=0.99,
+                                reason="PDPL consent granted — Boba enabled for this group")
+            return Decision.silent(Stage.STAGE0_RULES, "awaiting PDPL consent (not stored)")
 
         # (iii) open-loop: did this human answer Boba's pending question?
         answered = openloop.is_answer(msg, thread)

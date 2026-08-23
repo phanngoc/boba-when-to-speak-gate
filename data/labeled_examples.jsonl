@@ -18,3 +18,25 @@
 {"text": "sao cũng được, ai quyết đi", "context": ["đi ăn hay đi cafe?", "tùy"], "addressed": "group", "speak_label": "speak", "intent": "decision_deadlock", "notes": "clear deadlock, group asking someone to decide"}
 {"text": "😂😂😂", "context": ["kể tiếp đi"], "addressed": "group", "speak_label": "silent", "intent": "chitchat", "notes": "emoji-only reaction"}
 {"text": "Boba đề xuất giúp mình lịch trình 2 ngày Đà Nẵng với", "context": [], "addressed": "boba", "speak_label": "speak", "intent": "explicit_request", "notes": "direct request to Boba for planning"}
+{"text": "ok chốt luôn 8h nhé mọi người", "context": ["mấy giờ đi ta"], "addressed": "group", "speak_label": "silent", "intent": "planning", "notes": "converging: the group itself just locked the time"}
+{"text": "vậy đi quán Bụi nha", "context": ["ăn gì giờ"], "addressed": "group", "speak_label": "silent", "intent": "chitchat", "notes": "converging: a concrete proposal closes it"}
+{"text": "thôi quyết định quán lẩu đi", "context": [], "addressed": "group", "speak_label": "silent", "intent": "planning", "notes": "converging directive"}
+{"text": "ok deal chốt kèo", "context": ["đi xem phim tối nay nhé"], "addressed": "group", "speak_label": "silent", "intent": "chitchat", "notes": "converging acknowledgement"}
+{"text": "Lan ơi gửi tao cái ảnh hôm qua với", "context": [], "addressed": "individual", "speak_label": "silent", "intent": "chitchat", "notes": "request aimed at a specific person"}
+{"text": "Hưng ơi bài tập xong chưa", "context": [], "addressed": "individual", "speak_label": "silent", "intent": "question", "notes": "one-to-one, not Boba"}
+{"text": "trời hôm nay nóng dễ sợ", "context": [], "addressed": "group", "speak_label": "silent", "intent": "chitchat", "notes": "small talk"}
+{"text": "ừ biết rồi", "context": ["nhớ mang áo mưa nha"], "addressed": "group", "speak_label": "silent", "intent": "chitchat", "notes": "acknowledgement"}
+{"text": "nay đi làm mệt quá", "context": [], "addressed": "group", "speak_label": "silent", "intent": "chitchat", "notes": "venting"}
+{"text": "cảm ơn mọi người nhiều nha", "context": [], "addressed": "group", "speak_label": "silent", "intent": "chitchat", "notes": "closing pleasantry"}
+{"text": "ngủ đây bye mọi người", "context": [], "addressed": "group", "speak_label": "silent", "intent": "chitchat", "notes": "sign-off"}
+{"text": "thôi kệ đi đừng buồn nữa", "context": ["nay tao bị sếp mắng"], "addressed": "group", "speak_label": "silent", "intent": "chitchat", "notes": "emotional support between friends → stay out"}
+{"text": "haha đúng luôn", "context": ["ông kia tấu hài thật"], "addressed": "group", "speak_label": "silent", "intent": "chitchat", "notes": "reaction"}
+{"text": "ê xem cái clip này hài lắm", "context": [], "addressed": "group", "speak_label": "silent", "intent": "chitchat", "notes": "sharing, no coordination"}
+{"text": "cuối tuần đi Vũng Tàu không mọi người", "context": [], "addressed": "group", "speak_label": "speak", "intent": "planning", "notes": "trip planning kickoff"}
+{"text": "ai rảnh trưa nay đi ăn chung không", "context": ["nay ăn ở ngoài đi"], "addressed": "group", "speak_label": "speak", "intent": "planning", "notes": "group coordination, open"}
+{"text": "@Boba tính giúp chia tiền 640k cho 5 người với", "context": [], "addressed": "boba", "speak_label": "speak", "intent": "explicit_request", "notes": "mention + concrete compute request"}
+{"text": "vẽ giúp cái ảnh sinh nhật cho Lan đi Boba", "context": [], "addressed": "boba", "speak_label": "speak", "intent": "explicit_request", "notes": "draw request (vẽ, accented)"}
+{"text": "Boba ơi gợi ý lịch trình Đà Lạt 3 ngày đi", "context": [], "addressed": "boba", "speak_label": "speak", "intent": "explicit_request", "notes": "planning request to Boba"}
+{"text": "quán nướng gần đây đi", "context": ["Boba: mọi người muốn ăn khu nào?"], "addressed": "group", "speak_label": "speak", "intent": "planning", "notes": "answers Boba's choice loop → continue"}
+{"text": "ăn gì giờ ta, đói mà lười đi xa", "context": ["đói quá"], "addressed": "group", "speak_label": "escalate", "intent": "planning", "notes": "borderline: mild planning, could help or could wait"}
+{"text": "quán A cũng ổn mà B cũng được, tính sao giờ", "context": ["A đi", "B đi"], "addressed": "group", "speak_label": "escalate", "intent": "decision_deadlock", "notes": "deadlock but low stakes → let judge decide"}

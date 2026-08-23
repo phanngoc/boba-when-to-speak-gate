@@ -50,6 +50,7 @@ class Message:
     sender_kind: SenderKind = SenderKind.HUMAN
     reply_to: Optional[str] = None  # msg_id this replies to
     media_only: bool = False        # image/sticker with no text
+    mention: bool = False           # transport-signalled @mention / reply-to-bot
 
     @property
     def from_boba(self) -> bool:

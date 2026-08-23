@@ -79,7 +79,7 @@ Chi phí biên thấp vì đa số tin dừng ở Tầng 0/1; chỉ số ít ch�
 - `prompts/judge_system.md` — rubric cho LLM judge (JSON-only, "phân vân thì im").
 - `prompts/classifier_labeling.md` — hướng dẫn gán nhãn, taxonomy intent, class
   balance (~90% `silent`), weak labels, và **metric** (barge-in rate, mute rate…).
-- `data/labeled_examples.jsonl` — 20 ví dụ tiếng Việt đã gán nhãn.
+- `data/labeled_examples.jsonl` — 42 ví dụ tiếng Việt đã gán nhãn.
 
 ### (iii) Open-loop tracking (Boba tự theo dõi vòng hỏi của chính nó)
 - `boba_gate/gate/openloop.py` — khi Boba hỏi một câu, nó **mở một loop**
@@ -113,7 +113,7 @@ ranh giới từ). Vài nhóm chính:
 # 1) Demo — kịch bản group chat tiếng Việt (thuần stdlib, không cần cài gì)
 python scripts/demo.py
 
-# 2) Test (29 test)
+# 2) Test (41 test)
 python -m pytest -q
 
 # 3) Web layer (tuỳ chọn) — cần FastAPI
@@ -213,6 +213,43 @@ gate = Gate(judge=judge)                        # cùng interface, phần còn l
 
 ---
 
+## Production add-ons (P0)
+
+Những mảnh đầu tiên đưa reference tiến gần production (xem [`PRODUCTION.md`](./PRODUCTION.md)):
+
+**1. Transport có thể thay thế + adapter Telegram** (`transport.py`) — kênh *duy nhất*
+có Group Bot API mở để đọc mọi tin (xem [`VIETNAM_MARKET.md`](./VIETNAM_MARKET.md)):
+```python
+from boba_gate import TelegramGateway
+gw = TelegramGateway(token="…", bot_username="boba_bot")   # tạo bot + TẮT privacy mode
+msg = gw.parse(update)          # webhook Telegram → Message (tự nhận @mention/reply)
+await gw.send(msg.thread_id, "chào cả nhà")
+```
+
+**2. Train classifier từ nhãn** (`train.py`) — dùng đúng feature của production:
+```bash
+python scripts/train_classifier.py          # → data/classifier_weights.json
+```
+```python
+from boba_gate import Gate, TrainedLinearClassifier
+clf = TrainedLinearClassifier.load("data/classifier_weights.json")
+gate = Gate(classifier=clf)                  # cùng interface, thay thẳng
+```
+> ⚠️ Chỉ 42 ví dụ minh hoạ → weights *đúng hướng* nhưng **chưa đủ mạnh cho prod**
+> (cần vài nghìn nhãn theo prior thật ~90% `silent`). Mặc định `Gate()` vẫn dùng
+> `LinearClassifier` gán tay.
+
+**3. Consent PDPL** (`consent.py`, xem [`COMPLIANCE_VN.md`](./COMPLIANCE_VN.md)) —
+không có consent thì **không xử lý/lưu** tin (data minimization):
+```python
+from boba_gate import Gate, ConsentStore
+gate = Gate(consent=ConsentStore())          # im lặng + không lưu tới khi nhóm "Boba đồng ý"
+```
+
+**4. CI** — `.github/workflows/ci.yml` chạy pytest (3.10/3.12) + smoke demo/train.
+
+---
+
 ## Cấu trúc repo
 
 ```
@@ -220,20 +257,24 @@ boba_gate/
   models.py            # dataclasses: Message, Thread, Signals, Decision, OpenLoop
   config.py            # ngưỡng & trọng số (tunable)
   store.py             # ThreadStore in-memory (thay bằng Redis/PG khi lên prod)
+  transport.py         # Gateway interface + Telegram adapter (P0)
+  consent.py           # PDPL consent gating (P0)
+  train.py             # train Stage-1 classifier từ nhãn (P0)
   web.py               # FastAPI webhook layer (tuỳ chọn)
   gate/
-    signals.py         # trích tín hiệu (Vietnamese-aware)
+    signals.py         # trích tín hiệu (Vietnamese-aware, xử lý đ→d)
     stage0_rules.py    # (0) hard rules
-    stage1_classifier.py # (1) cheap classifier — linear/logistic
+    stage1_classifier.py # (1) cheap classifier — linear + TrainedLinearClassifier
     stage2_judge.py    # (2) LLM judge + fallback
     openloop.py        # (iii) open-loop tracking
     debounce.py        # (i)  debounce / race-with-humans
     thresholds.py      # feedback adaptation per-thread
     pipeline.py        # orchestrator: Gate + Conversation + responder
 prompts/               # (ii) judge rubric + labeling guide
-data/                  # (ii) ví dụ tiếng Việt đã gán nhãn (.jsonl)
-scripts/demo.py        # kịch bản chạy thử
-tests/                 # 29 test
+data/                  # (ii) 42 ví dụ tiếng Việt đã gán nhãn + classifier_weights.json
+scripts/               # demo.py + train_classifier.py
+tests/                 # 41 test
+PRODUCTION.md · VIETNAM_MARKET.md · COMPLIANCE_VN.md   # roadmap + phân tích thị trường + PDPL
 ```
 
 ---

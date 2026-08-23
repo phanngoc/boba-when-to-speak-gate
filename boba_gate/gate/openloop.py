@@ -105,8 +105,8 @@ def resolve_all_boba_loops(thread: Thread, by: SenderKind, ts: float) -> int:
 # --- small heuristics -------------------------------------------------------
 
 def _looks_like_proposal(t: str) -> bool:
-    # "... đi", "... nhé", "chốt ...", "đi <chỗ>"
-    return t.endswith("di") or t.endswith(" di") or "chot" in t or t.startswith("di ")
+    # a directive/close: trailing "... đi" or a "chốt ..."
+    return t == "di" or t.endswith(" di") or "chot" in t
 
 
 def _has_word(t: str, lex) -> bool:

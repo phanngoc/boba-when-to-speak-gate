@@ -64,3 +64,53 @@ class LinearClassifier:
     def predict(self, sig: Signals) -> tuple[float, Intent]:
         z = sum(self.features(sig).values())
         return _sigmoid(z), sig.intent
+
+
+# --- raw features for TRAINING a classifier ---------------------------------
+# Keys are the learnable feature space (see boba_gate/train.py). Values are raw
+# indicators (0/1 or small counts) — the trainer learns the weights.
+FEATURE_KEYS = [
+    "planning", "deadlock", "explicit_request", "question_group", "unanswered",
+    "addressed_individual", "velocity_high", "humans_converging",
+    "recently_ignored", "mentions_boba", "is_dm", "is_question",
+]
+
+
+def indicators(sig: Signals, ignored_cap: int = 3) -> dict[str, float]:
+    return {
+        "planning": float(sig.intent == Intent.PLANNING),
+        "deadlock": float(sig.intent == Intent.DECISION_DEADLOCK),
+        "explicit_request": float(sig.intent == Intent.EXPLICIT_REQUEST),
+        "question_group": float(sig.is_question and sig.addressed == "group"),
+        "unanswered": float(sig.unanswered_question),
+        "addressed_individual": float(sig.addressed == "individual"),
+        "velocity_high": float(sig.velocity_high),
+        "humans_converging": float(sig.humans_converging),
+        "recently_ignored": float(min(sig.recently_ignored, ignored_cap)),
+        "mentions_boba": float(sig.mentions_boba),
+        "is_dm": float(sig.is_dm),
+        "is_question": float(sig.is_question),
+    }
+
+
+class TrainedLinearClassifier:
+    """Logistic model with LEARNED weights (from train.py). Same interface as
+    LinearClassifier, so `Gate(classifier=...)` swaps it in unchanged."""
+
+    def __init__(self, weights: dict[str, float], bias: float,
+                 ignored_cap: int = 3):
+        self.weights = weights
+        self.bias = bias
+        self.ignored_cap = ignored_cap
+
+    def predict(self, sig: Signals) -> tuple[float, Intent]:
+        x = indicators(sig, self.ignored_cap)
+        z = self.bias + sum(self.weights.get(k, 0.0) * v for k, v in x.items())
+        return _sigmoid(z), sig.intent
+
+    @classmethod
+    def load(cls, path) -> "TrainedLinearClassifier":
+        import json
+        from pathlib import Path
+        data = json.loads(Path(path).read_text(encoding="utf-8"))
+        return cls(data["weights"], data["bias"], data.get("ignored_cap", 3))
