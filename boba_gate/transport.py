@@ -102,3 +102,67 @@ class TelegramGateway:
     async def send(self, thread_id: str, text: str) -> None:
         url = f"{self.API}/bot{self.token}/sendMessage"
         await asyncio.to_thread(self._post, url, {"chat_id": thread_id, "text": text})
+
+
+# --- Zalo Official Account ---------------------------------------------------
+def _urllib_post_headers(url: str, payload: dict, headers: dict,
+                         timeout: float = 10.0) -> dict:
+    data = json.dumps(payload).encode("utf-8")
+    hdrs = {"Content-Type": "application/json", **headers}
+    req = urllib.request.Request(url, data=data, headers=hdrs, method="POST")
+    with urllib.request.urlopen(req, timeout=timeout) as resp:  # nosec - fixed host
+        return json.loads(resp.read().decode("utf-8"))
+
+
+def parse_zalo_event(event: dict) -> Optional[Message]:
+    """Normalize a Zalo OA webhook event into our `Message`.
+
+    Zalo OA is **1:1** (business ↔ user), not group chat — so `thread_id` is the
+    user id and every message is effectively addressed to the OA (`mention=True`,
+    and the store should mark the thread `is_dm=True`). This is the VN-viable
+    channel: a business concierge on Zalo OA + Mini App (see VIETNAM_MARKET.md).
+    Text events: `user_send_text`; media: `user_send_image` / `user_send_sticker`.
+    """
+    name = event.get("event_name", "")
+    if not name.startswith("user_send"):
+        return None
+    sender = str(event.get("sender", {}).get("id", "unknown"))
+    msg = event.get("message", {}) or {}
+    text = msg.get("text", "") or ""
+    ts_ms = float(event.get("timestamp", 0) or 0)
+    return Message(
+        thread_id=sender,                 # 1:1 conversation keyed by the user
+        sender_id=sender,
+        text=text,
+        ts=ts_ms / 1000.0,                # Zalo timestamps are milliseconds
+        msg_id=str(msg.get("msg_id", "")),
+        sender_kind=SenderKind.HUMAN,
+        media_only=(not text) and name != "user_send_text",
+        mention=True,                     # OA is 1:1 → the user is talking to us
+    )
+
+
+class ZaloOAGateway:
+    """Sends OA messages via Zalo's Open API.
+
+    `access_token` is a callable because the OA token expires (~1h) and must be
+    refreshed out of band; pass a provider that returns a fresh token. Endpoint
+    default is the v3.0 OA message API.
+    """
+
+    ENDPOINT = "https://openapi.zalo.me/v3.0/oa/message/cs"
+
+    def __init__(self, access_token, endpoint: Optional[str] = None,
+                 http_post=_urllib_post_headers):
+        self._token = access_token if callable(access_token) else (lambda: access_token)
+        self.endpoint = endpoint or self.ENDPOINT
+        self._post = http_post
+
+    def parse(self, event: dict) -> Optional[Message]:
+        return parse_zalo_event(event)
+
+    async def send(self, thread_id: str, text: str) -> None:
+        payload = {"recipient": {"user_id": thread_id},
+                   "message": {"text": text}}
+        headers = {"access_token": self._token()}
+        await asyncio.to_thread(self._post, self.endpoint, payload, headers)

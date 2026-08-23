@@ -17,7 +17,7 @@ and compliance rows dominate everything else.
 | **Safety** | stage-0 rules outside LLM | Prompt-injection hardening (never let chat text change gate rules), PII minimization/redaction before the LLM, abuse/spam rate limits, jailbreak tests. | **P0** |
 | **Debounce at scale** (`debounce.py`) | asyncio in one process | Durable timers (Redis sorted-set / a queue with delay, e.g. Temporal / SQS delay) so pending SPEAKs survive restarts and shard across workers. | **P1** |
 | **Observability** | `reason` strings | Structured logs, metrics (barge-in rate, mute rate, stage-hit ratio, LLM cost/msg, p95 latency), tracing, **shadow-mode logging**. | **P1** |
-| **Eval harness** | 41 unit tests | Labeled-transcript offline eval with the 3× FP penalty; shadow-mode replay; canary + online A/B on mute/kick rate. | **P1** |
+| **Eval harness** | 51 unit tests | Labeled-transcript offline eval with the 3× FP penalty; shadow-mode replay; canary + online A/B on mute/kick rate. | **P1** |
 | **Cost controls** | — | Budget per thread/day; downgrade to rules-only under load; cache; batch. Each message is a potential LLM call → guard unit economics. | **P1** |
 | **Vietnamese NLP** (`signals.py`) | lexicon + accent rules | Real VN tokenizer/intent model (teencode, code-switching, region slang); the lexicon is a bootstrap, not production coverage. | **P1** |
 | **Multi-tenancy / scale** | single `Gate` | Horizontal workers, sticky per-thread routing, backpressure, idempotent webhook handling (dedupe by message id), out-of-order reconstruction. | **P1** |

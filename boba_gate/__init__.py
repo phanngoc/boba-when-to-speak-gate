@@ -10,7 +10,8 @@ from .gate.pipeline import Conversation, Event, Gate, TemplateResponder
 from .gate.stage1_classifier import (LinearClassifier, TrainedLinearClassifier)
 from .consent import ConsentState, ConsentStore
 from .store import ThreadStore
-from .transport import Gateway, LoggingGateway, TelegramGateway
+from .store_backends import RedisThreadStore, SqlThreadStore
+from .transport import (Gateway, LoggingGateway, TelegramGateway, ZaloOAGateway)
 
 __all__ = [
     "Gate", "Conversation", "Event", "TemplateResponder", "ThreadStore",
@@ -19,5 +20,6 @@ __all__ = [
     "GateConfig", "DEFAULT",
     "LinearClassifier", "TrainedLinearClassifier",
     "ConsentStore", "ConsentState",
-    "Gateway", "LoggingGateway", "TelegramGateway",
+    "Gateway", "LoggingGateway", "TelegramGateway", "ZaloOAGateway",
+    "RedisThreadStore", "SqlThreadStore",
 ]

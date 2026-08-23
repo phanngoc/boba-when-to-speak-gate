@@ -1,7 +1,18 @@
 # Core gate + tests need NOTHING beyond the Python 3.10+ stdlib.
-# These are only for the optional FastAPI web layer (boba_gate/web.py):
+# The lines below are ONLY for optional production integrations; the code uses
+# duck-typed/injected clients so tests run without any of them.
+
+# Web layer (boba_gate/web.py)
 fastapi>=0.110
 uvicorn>=0.29
+
+# State stores (boba_gate/store_backends.py) — SQLite backend uses the stdlib
+redis>=5.0            # RedisThreadStore
+psycopg[binary]>=3.1  # SqlThreadStore(placeholder="%s")
+
+# OpenAI Stage-2 judge (boba_gate/llm_openai.py) uses stdlib urllib by default;
+# install the SDK only if you swap in a client:
+# openai>=1.0
 
 # Dev:
 pytest>=7

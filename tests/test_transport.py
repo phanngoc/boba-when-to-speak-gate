@@ -1,8 +1,8 @@
 import asyncio
 
 from boba_gate.models import SenderKind
-from boba_gate.transport import (LoggingGateway, TelegramGateway,
-                                 parse_telegram_update)
+from boba_gate.transport import (LoggingGateway, TelegramGateway, ZaloOAGateway,
+                                 parse_telegram_update, parse_zalo_event)
 
 
 def test_parse_group_message_with_mention():
@@ -53,3 +53,31 @@ def test_logging_gateway_sink():
     out = []
     asyncio.run(LoggingGateway(sink=out.append).send("t", "hi"))
     assert out and "hi" in out[0]
+
+
+# --- Zalo OA ----------------------------------------------------------------
+def test_parse_zalo_text_event():
+    ev = {"event_name": "user_send_text", "sender": {"id": "U123"},
+          "timestamp": 1690000000000,
+          "message": {"text": "đặt bàn tối nay được không", "msg_id": "m1"}}
+    m = parse_zalo_event(ev)
+    assert m.thread_id == "U123" and m.sender_id == "U123"
+    assert m.mention is True and abs(m.ts - 1690000000.0) < 1
+
+
+def test_parse_zalo_non_user_event_is_none():
+    assert parse_zalo_event({"event_name": "oa_send_text"}) is None
+
+
+def test_zalo_send_payload_and_token_header():
+    captured = {}
+
+    def fake_post(url, payload, headers, timeout=10.0):
+        captured.update(url=url, payload=payload, headers=headers)
+        return {"error": 0}
+
+    gw = ZaloOAGateway(access_token=lambda: "TOK", http_post=fake_post)
+    asyncio.run(gw.send("U123", "xin chào"))
+    assert captured["payload"] == {"recipient": {"user_id": "U123"},
+                                   "message": {"text": "xin chào"}}
+    assert captured["headers"]["access_token"] == "TOK"

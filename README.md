@@ -113,7 +113,7 @@ ranh giới từ). Vài nhóm chính:
 # 1) Demo — kịch bản group chat tiếng Việt (thuần stdlib, không cần cài gì)
 python scripts/demo.py
 
-# 2) Test (41 test)
+# 2) Test (51 test)
 python -m pytest -q
 
 # 3) Web layer (tuỳ chọn) — cần FastAPI
@@ -248,6 +248,34 @@ gate = Gate(consent=ConsentStore())          # im lặng + không lưu tới khi
 
 **4. CI** — `.github/workflows/ci.yml` chạy pytest (3.10/3.12) + smoke demo/train.
 
+**5. Adapter Zalo OA** (`transport.py`) — kênh B2B khả thi ở VN (1:1 concierge):
+```python
+from boba_gate import ZaloOAGateway
+gw = ZaloOAGateway(access_token=lambda: get_fresh_oa_token())
+msg = gw.parse(zalo_webhook_event)           # event Zalo → Message
+await gw.send(msg.thread_id, "Đã giữ bàn 19h tối nay cho anh/chị nhé 🍽️")
+```
+
+**6. State store Redis / Postgres** (`store_backends.py`) — cùng interface với
+`ThreadStore`; luồng: `t = store.get_or_create(id); gate.handle(msg, t); store.save(t)`:
+```python
+import redis; from boba_gate import RedisThreadStore
+store = RedisThreadStore(redis.Redis.from_url("redis://…"), ttl_seconds=86400)
+
+import psycopg; from boba_gate import SqlThreadStore   # SQLite dùng được ngay (stdlib)
+store = SqlThreadStore(psycopg.connect("postgresql://…"), placeholder="%s",
+                       init_schema=False)               # chạy data/schema_postgres.sql trước
+```
+
+**7. LLMJudge → OpenAI** (`llm_openai.py`) — Tầng 2 gọi OpenAI JSON mode, tự
+fallback về RuleBasedJudge khi lỗi/timeout:
+```python
+import os; from boba_gate import Gate
+from boba_gate.llm_openai import build_openai_judge
+gate = Gate(judge=build_openai_judge(api_key=os.environ["OPENAI_API_KEY"],
+                                     model="gpt-4o-mini"))
+```
+
 ---
 
 ## Cấu trúc repo
@@ -256,10 +284,12 @@ gate = Gate(consent=ConsentStore())          # im lặng + không lưu tới khi
 boba_gate/
   models.py            # dataclasses: Message, Thread, Signals, Decision, OpenLoop
   config.py            # ngưỡng & trọng số (tunable)
-  store.py             # ThreadStore in-memory (thay bằng Redis/PG khi lên prod)
-  transport.py         # Gateway interface + Telegram adapter (P0)
+  store.py             # ThreadStore in-memory
+  store_backends.py    # RedisThreadStore + SqlThreadStore (Postgres/SQLite) (P0)
+  transport.py         # Gateway interface + Telegram & Zalo OA adapters (P0)
   consent.py           # PDPL consent gating (P0)
   train.py             # train Stage-1 classifier từ nhãn (P0)
+  llm_openai.py        # LLMJudge → OpenAI (JSON mode, tự fallback) (P0)
   web.py               # FastAPI webhook layer (tuỳ chọn)
   gate/
     signals.py         # trích tín hiệu (Vietnamese-aware, xử lý đ→d)
@@ -273,7 +303,7 @@ boba_gate/
 prompts/               # (ii) judge rubric + labeling guide
 data/                  # (ii) 42 ví dụ tiếng Việt đã gán nhãn + classifier_weights.json
 scripts/               # demo.py + train_classifier.py
-tests/                 # 41 test
+tests/                 # 51 test
 PRODUCTION.md · VIETNAM_MARKET.md · COMPLIANCE_VN.md   # roadmap + phân tích thị trường + PDPL
 ```
 
