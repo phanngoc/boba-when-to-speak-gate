@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "boba-gate"
+version = "0.1.0"
+description = "Reference When-to-Speak gate for a group-chat AI agent (Boba-style)"
+requires-python = ">=3.10"
+
+[project.optional-dependencies]
+web = ["fastapi>=0.110", "uvicorn>=0.29"]
+
+[tool.setuptools]
+packages = ["boba_gate", "boba_gate.gate"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]

@@ -1,0 +1,7 @@
+# Core gate + tests need NOTHING beyond the Python 3.10+ stdlib.
+# These are only for the optional FastAPI web layer (boba_gate/web.py):
+fastapi>=0.110
+uvicorn>=0.29
+
+# Dev:
+pytest>=7

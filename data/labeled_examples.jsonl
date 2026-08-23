@@ -1,0 +1,20 @@
+{"text": "haha ông này hài vãi 😂", "context": ["ê tối qua xem đá bóng ko", "có, kèo đó căng phết"], "addressed": "group", "speak_label": "silent", "intent": "chitchat", "notes": "pure banter, no value to add"}
+{"text": "tối nay đi đâu ăn ta?", "context": ["đói quá", "trưa ăn ít nên giờ xỉu"], "addressed": "group", "speak_label": "speak", "intent": "planning", "notes": "group planning question, nobody answering yet"}
+{"text": "Nam ơi mai cậu rảnh không?", "context": [], "addressed": "individual", "speak_label": "silent", "intent": "planning", "notes": "aimed at a specific person, not Boba's job"}
+{"text": "thôi chốt quán Bụi đi mọi người", "context": ["ăn hải sản hay lẩu?", "gì cũng đc"], "addressed": "group", "speak_label": "silent", "intent": "planning", "notes": "humans converging on an answer → retreat"}
+{"text": "quán A hay quán B nhỉ, cũng được á", "context": ["đi quán A đi", "hay B ngon hơn?"], "addressed": "group", "speak_label": "escalate", "intent": "decision_deadlock", "notes": "genuine deadlock, could add value but borderline → judge"}
+{"text": "ai vẽ giúp cái poster cho buổi đi chơi đi", "context": ["cuối tuần đi Đà Lạt nhé"], "addressed": "group", "speak_label": "speak", "intent": "explicit_request", "notes": "explicit creative request"}
+{"text": "@Boba tối nay mấy giờ tập trung ổn nhất?", "context": ["mình 7h mới xong việc"], "addressed": "boba", "speak_label": "speak", "intent": "planning", "notes": "directly mentioned → answer"}
+{"text": "boba im đi ồn quá", "context": ["để mình đề xuất 1 quán nhé", "ừ"], "addressed": "boba", "speak_label": "silent", "intent": "dismiss", "notes": "explicit dismiss → block + raise threshold"}
+{"text": "chán ghê hôm nay mưa suốt", "context": [], "addressed": "group", "speak_label": "silent", "intent": "chitchat", "notes": "venting, no request"}
+{"text": "cuối tuần này off đi mọi người ơi", "context": [], "addressed": "group", "speak_label": "speak", "intent": "planning", "notes": "coordination kickoff for the group"}
+{"text": "7h tối mai nhé", "context": ["Boba: mọi người rảnh lúc mấy giờ?"], "addressed": "group", "speak_label": "speak", "intent": "planning", "notes": "answers Boba's open loop (time) → continue"}
+{"text": "quán hải sản gần biển đi", "context": ["Boba: mọi người muốn ăn khu nào?"], "addressed": "group", "speak_label": "speak", "intent": "planning", "notes": "answers Boba's open loop (choice) → continue"}
+{"text": "ê bạn kia bị sao thế, nhìn buồn ghê", "context": ["thôi để yên cho nó"], "addressed": "group", "speak_label": "silent", "intent": "chitchat", "notes": "sensitive/personal → stay out"}
+{"text": "làm cho bọn tao 1 bài hát về chuyến đi Sa Pa đi", "context": ["chuyến đó vui thật"], "addressed": "group", "speak_label": "speak", "intent": "explicit_request", "notes": "explicit song request"}
+{"text": "mấy giờ rồi nhỉ", "context": [], "addressed": "group", "speak_label": "silent", "intent": "question", "notes": "trivial question anyone answers, low value"}
+{"text": "ai biết quán nào ship tới 12h đêm không", "context": ["đói quá mà muộn rồi"], "addressed": "group", "speak_label": "speak", "intent": "planning", "notes": "actionable lookup Boba can help with"}
+{"text": "ok luôn, vậy chốt 8h ở cổng trường nhé", "context": ["8h được ko", "ok"], "addressed": "group", "speak_label": "silent", "intent": "planning", "notes": "already resolved by humans"}
+{"text": "sao cũng được, ai quyết đi", "context": ["đi ăn hay đi cafe?", "tùy"], "addressed": "group", "speak_label": "speak", "intent": "decision_deadlock", "notes": "clear deadlock, group asking someone to decide"}
+{"text": "😂😂😂", "context": ["kể tiếp đi"], "addressed": "group", "speak_label": "silent", "intent": "chitchat", "notes": "emoji-only reaction"}
+{"text": "Boba đề xuất giúp mình lịch trình 2 ngày Đà Nẵng với", "context": [], "addressed": "boba", "speak_label": "speak", "intent": "explicit_request", "notes": "direct request to Boba for planning"}
